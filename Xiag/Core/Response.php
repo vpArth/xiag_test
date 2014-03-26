@@ -38,6 +38,7 @@ class Response
    */
   public function send($data, $format)
   {
+    echo $format;
     ob_end_flush();
     switch ($format) {
       case 'json':
@@ -58,6 +59,7 @@ class Response
    */
   private function defaultSend($data)
   {
+    print_r($this->headers);
     $this->headers();
     echo $data;
   }
@@ -96,6 +98,6 @@ class Response
    */
   private function debug($data)
   {
-    file_put_contents('debug.log', $data);
+    file_put_contents('debug.log', $data, FILE_APPEND);
   }
 }

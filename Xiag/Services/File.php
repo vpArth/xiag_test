@@ -1,17 +1,19 @@
 <?php
 namespace Xiag\Services;
 
+use Xiag\Core\Service;
 use Xiag\Core\IService;
 
 use Xiag\Core\Router;
 use Xiag\Core\RouteData;
+use Xiag\Core\Response;
 
 use Xiag\Core\ValidatorException;
 
-class File implements IService
+class File extends Service implements IService
 {
   private $base;
-  private $extensions = array('ico');
+  private $extensions = array('ico', 'js', 'css');
   public function __construct($base = null, $extensions = null)
   {
     $this->base = $base ?: __DIR__.'/..';
@@ -28,22 +30,25 @@ class File implements IService
     $router->addRoute(new RouteData(array(
       'verb' => 'GET',
       'path' => "^/([\s\S]+)",
-      'classname' => get_class($this),
+      'classname' => $this,
       'method' => 'get',
       'validators' => array(),
-      'responseFormat' => 'html'
+      'responseFormat' => 'default'
     )));
   }
 
-
-
-  public function get(array $params)
+  public function get(array $params, Response $response)
   {
     $filename = $this->base . '/' . $params['__vars__'][1];
     $ext = explode('.', $filename);
     $ext = end($ext);
-    if (file_exists($filename) && in_array($ext, $this->extensions))
-      return file_get_contents($filename);
+    if (file_exists($filename) && in_array($ext, $this->extensions)) {
+      $finfo = new \finfo(\FILEINFO_MIME);
+      $content = file_get_contents($filename);
+      $mimeType = $finfo->buffer($content);
+      $response->header('Content-Type', $mimeType);
+      return $content;
+    }
     return false;
   }
 

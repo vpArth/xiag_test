@@ -6,12 +6,13 @@ use Xiag\Core\IService;
 
 use Xiag\Core\Router;
 use Xiag\Core\RouteData;
-
-use Xiag\HTML\Template;
-
 use Xiag\Core\ValidatorException;
 
-class Hello extends Service implements IService
+use Xiag\HTML\Template;
+use Xiag\HTML\Style;
+use Xiag\HTML\Script;
+
+class Short extends Service implements IService
 {
   public function __construct()
   {
@@ -26,9 +27,9 @@ class Hello extends Service implements IService
   {
     $router->addRoute(new RouteData(array(
       'verb' => 'GET',
-      'path' => "^/hello/([\S\s]+)",
+      'path' => "",
       'classname' => $this,
-      'method' => 'greet',
+      'method' => 'index',
       'validators' => array(),
       'responseFormat' => 'html'
     )));
@@ -36,13 +37,22 @@ class Hello extends Service implements IService
 
 
 
-  public function greet(array $params)
+  public function index()
   {
     $layout = new Template(__DIR__.'/templates/layout.tpl');
-    $page   = new Template(__DIR__.'/templates/index.tpl');
-    $name = self::getUrlParam($params);
+    $page   = new Template(__DIR__.'/templates/short.tpl');
 
-    return $page->render(array('name'=>$name), $layout);
+    $data = array();
+
+    $styles = array();
+    $styles[] = new Style('/css/style.css');
+    $data['styles'] = implode('', $styles);
+
+    $scripts = array();
+    $scripts[] = new Script('/js/script.js');
+    $data['scripts'] = implode('', $scripts);
+
+    return $page->render($data, $layout);
   }
 
 }

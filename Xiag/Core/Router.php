@@ -15,7 +15,7 @@ interface IRouter
 {
   public function addRoute(RouteData $data);
 
-  public function execURI();
+  public function execURI(Response $response);
 }
 
 class Router implements IRouter
@@ -90,17 +90,13 @@ class Router implements IRouter
    * @return mixed
    * @throws RouterException
    */
-  public function execURI()
+  public function execURI(Response $response)
   {
     foreach ($this->routes as $pattern => $data) {
 
       list($method, $path) = explode(' ', $pattern, 2);
       list($url) = explode('?', $_SERVER['REQUEST_URI'], 2);
       $matches = array();
-      print_r([
-        [$method, $_SERVER['REQUEST_METHOD']],
-        [$path, $url],
-        ]);
       if ($method === $_SERVER['REQUEST_METHOD'] && preg_match('#' . $path . '#i', $url, $matches)) {
         $class = is_object($data['classname']) ? $data['classname'] : new $data['classname']();
         if (!method_exists($class, $data['method'])) {
@@ -113,7 +109,7 @@ class Router implements IRouter
         if (($error = $this->validate($data['validators'], $params)) !== self::VALIDATE_SUCCESS) {
           throw new ValidatorException($error, ErrorCodes::INVALID_PARAMS);
         }
-        $result = $class->{$data['method']}($params);
+        $result = $class->{$data['method']}($params, $response);
         if ($result !== false)
           return $result;
       }

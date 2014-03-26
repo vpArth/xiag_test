@@ -30,7 +30,7 @@ class API
   }
   public function getResponse()
   {
-    return $this->response();
+    return $this->response;
   }
 
   private $callbacks = array(self::BEFORE_RESPONSE => array());
@@ -55,12 +55,12 @@ class API
   public function run()
   {
     try {
-      $result = $this->router->execURI();
+      $result = $this->router->execURI($this->getResponse());
     } catch (\Exception $e) {
       $result = 'Something wrong happened';
     }
     $this->runCallbacks(self::BEFORE_RESPONSE, $result);
     if(isset($e)) echo $e;
-    $this->response->send($result, $this->router->getResponseFormat());
+    $this->getResponse()->send($result, $this->router->getResponseFormat());
   }
 }
