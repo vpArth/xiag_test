@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Xiag Shortener</title>
+        <link href="/css/style.css" rel="stylesheet" />
+        <script src="/js/script.js" ></script>
+    </head>
+    <body>
+        <table>
+          <tbody>
+            <tr>
+              <th>Long URL</th>
+              <th>Short URL</th>
+            </tr>
+            <tr>
+              <td>
+                <input type="url" name="url" onkeyup="if(event.keyCode==13) request();">
+                <input type="button" value="Do!"  onclick="request();">
+              </td>
+              <td id="result"></td>
+            </tr>
+          </tbody>
+        </table>
+    </body>
+</html>

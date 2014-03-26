@@ -1,0 +1,19 @@
+Installation:
+  - Database:
+    1. create database
+    2. import structure.sql
+    3. update config.json
+      - dsn, username, password
+    4. also should be pdo extension installed
+
+  - Cache:
+      Memcache used, but it wrapped, and if Memcache not installed or server is not running all will work fine without cache.
+
+  - Config:
+      for local configuration use git ignored config.local.json file(just put it near config.json)
+
+  - Run server:
+    I use internal php server for development, each other server, like Apache or Nginx
+        should serve static files(index.html, css/*.css, js/*.js, ) in document root,
+        and if requested files don't exist rewrite queries to in.php script
+    for run internal server, simple execute run.sh script, or manually execute something like "php -S localhost:8000 ./in.php"

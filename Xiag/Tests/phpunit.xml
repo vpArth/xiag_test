@@ -1,6 +1,5 @@
 <phpunit>
     <testsuite name='Core'>
         <file>./Core/Loader.php</file>
-        <file>./Core/Router.php</file>
     </testsuite>
 </phpunit>

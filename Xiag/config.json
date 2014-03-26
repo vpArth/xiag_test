@@ -1,3 +1,8 @@
 {
-  "name": "Xiag Test Task"
+  "name": "Xiag Test Task",
+  "db": {
+    "dsn": "mysql:host=localhost;dbname=urls",
+    "username": "root",
+    "password": "root"
+  }
 }
