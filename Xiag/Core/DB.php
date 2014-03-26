@@ -12,9 +12,6 @@ class DB
   private $affectedRows = 0;
   private $lastId = null;
 
-  private $queryCount = 0;
-  private $queryTime = 0;
-
   //Singleton
   private static $instance = null;
   private function __clone() {}
@@ -87,12 +84,9 @@ class DB
   public function exec($sql, array $params = array())
   {
     if(!$this->pdo) $this->connect();
-    $start = microtime(true);
     $this->prepare($sql)->execPrepared($params);
     $this->lastId = $this->pdo->lastInsertId();
     $this->affectedRows = $this->statement->rowCount();
-    $this->queryTime += microtime(true) - $start;
-    $this->queryCount++;
     return $this;
   }
 
@@ -100,9 +94,6 @@ class DB
   {
     return $this->lastId;
   }
-
-  public function getQCount() { return $this->queryCount; }
-  public function getQTime() { return $this->queryTime; }
 
   public function cell($sql, array $params = array(), $col = 0)
   {
