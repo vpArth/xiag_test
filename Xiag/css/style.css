@@ -14,7 +14,7 @@ html, body, div, span, object, iframe, h1, h2, h3, h4, h5, p, a, abbr, acronym, 
 header {
   color: #174482;
   font-size: 26px;
-  background: url(/images/design/header_background_new.jpg) center 0 no-repeat;
+  background: url(http://www.xiag.ch/images/design/header_background_new.jpg) center 0 no-repeat;
   padding: 30px 20px 30px 100px;
 }
 table {
