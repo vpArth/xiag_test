@@ -15,6 +15,7 @@ class RouteData
   public $classname;
   public $method;
   public $validators;
+  public $responseFormat = 'json';
 
   public function __construct($data)
   {
@@ -23,6 +24,7 @@ class RouteData
     $this->classname = $data['classname'];
     $this->method = $data['method'];
     $this->validators = isset($data['validators']) ? $data['validators'] : array();
+    $this->responseFormat = isset($data['responseFormat']) ? $data['responseFormat'] : '';
   }
 
   public function getData()
@@ -32,7 +34,8 @@ class RouteData
       'path' => $this->path,
       'classname' => $this->classname,
       'method' => $this->method,
-      'validators' => $this->validators
+      'validators' => $this->validators,
+      'responseFormat' => $this->responseFormat
     );
   }
 

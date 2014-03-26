@@ -56,7 +56,7 @@ class Router extends \PHPUnit_Framework_TestCase
       $router->execURI();
       $this->assertTrue(false, "Should thrown RouterException");
     } catch (RouterException $e) {
-      $this->assertEquals($e->getMessage(), "Unregistered route");
+      $this->assertEquals($e->getMessage(), "404 Not Found");
     }
     $_SERVER['REQUEST_URI'] = '/testuri1';
     try {

@@ -22,6 +22,7 @@ class Router implements IRouter
 {
   const VALIDATE_SUCCESS = 0;
 
+
   private static $instance = null;
 
   private function __clone()
@@ -47,8 +48,17 @@ class Router implements IRouter
    */
   public function addRoute(RouteData $data)
   {
-    $this->routes[$data->verb . ' ' . $data->path] = $data->getData();
+    $route = $data->getData();
+    $key = $route['verb'] . ' ' . $route['path'];
+    $this->routes[$key] = $route;
+    $this->responseFormat = $route['responseFormat'];
     return $this;
+  }
+
+  private $responseFormat = '';
+  public function getResponseFormat()
+  {
+    return $this->responseFormat;
   }
 
   /**
@@ -70,7 +80,6 @@ class Router implements IRouter
     }
     if ($token = isset($_SERVER["AUTHORIZATION"])?$_SERVER["AUTHORIZATION"]:false)
       $params['token'] = $token;
-    unset($_GET, $_POST, $_FILES, $_REQUEST);
     //here can be some filters, modifications
     return $params;
   }
@@ -88,7 +97,11 @@ class Router implements IRouter
       list($method, $path) = explode(' ', $pattern, 2);
       list($url) = explode('?', $_SERVER['REQUEST_URI'], 2);
       $matches = array();
-      if ($method === $_SERVER['REQUEST_METHOD'] && preg_match_all('#' . $path . '#i', $url, $matches)) {
+      print_r([
+        [$method, $_SERVER['REQUEST_METHOD']],
+        [$path, $url],
+        ]);
+      if ($method === $_SERVER['REQUEST_METHOD'] && preg_match('#' . $path . '#i', $url, $matches)) {
         $class = is_object($data['classname']) ? $data['classname'] : new $data['classname']();
         if (!method_exists($class, $data['method'])) {
           $classname = is_object($data['classname']) ? get_class($data['classname']) : $data['classname'];
@@ -100,10 +113,12 @@ class Router implements IRouter
         if (($error = $this->validate($data['validators'], $params)) !== self::VALIDATE_SUCCESS) {
           throw new ValidatorException($error, ErrorCodes::INVALID_PARAMS);
         }
-        return $class->{$data['method']}($params);
+        $result = $class->{$data['method']}($params);
+        if ($result !== false)
+          return $result;
       }
     }
-    throw new RouterException("Unregistered route");
+    throw new RouterException("404 Not Found");
   }
 
   private function validateRequired(array &$vals, array &$data)
