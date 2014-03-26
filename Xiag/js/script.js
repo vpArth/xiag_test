@@ -1,9 +1,13 @@
 
 function Ajax() {
   var self = this;
-  var xmlhttp;
-  if (window.XMLHttpRequest) xmlhttp=new XMLHttpRequest();
-  else xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+
+  function getAjax() {
+    var xmlhttp;
+    if (window.XMLHttpRequest) xmlhttp=new XMLHttpRequest();
+    else xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    return xmlhttp;
+  }
 
   function buildUri(params) {
     var uri = [];
@@ -15,6 +19,7 @@ function Ajax() {
   }
 
   function post(resource, params, callback) {
+    var xmlhttp = getAjax();
     xmlhttp.onreadystatechange=function() {
       if (xmlhttp.readyState==4) {
         if (xmlhttp.status !== 200)
@@ -51,7 +56,7 @@ function result(msg) {
 
 function request() {
   var el = document.querySelector('input[name=url]');
-  if (!el.validity.valid) {
+  if (!el.validity.valid || !el.value) {
     flash('<span style="color: red;">Wrong url format</span>', 2000);
     return;
   }
