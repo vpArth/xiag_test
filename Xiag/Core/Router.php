@@ -119,8 +119,9 @@ class Router implements IRouter
     foreach ($vals as $rules) {
       foreach ($rules as $field => $reg) {
         if (isset($data[$field])) {
-          if ($reg === 'email' && !filter_var($data[$field], FILTER_VALIDATE_EMAIL)) {
-            return "Wrong {$field} format";
+          if ($reg === 'email') {
+            if (!filter_var($data[$field], FILTER_VALIDATE_EMAIL))
+              return "Wrong {$field} format";
           } elseif (!preg_match($reg, $data[$field])) {
             return "Wrong {$field} format";
           }

@@ -210,8 +210,8 @@ class Router extends \PHPUnit_Framework_TestCase
     $_SERVER['REQUEST_METHOD'] = 'GET';
 
     //long email
-    $_SERVER['REQUEST_URI'] = '/test?test=3&email=very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_email@mail.ru';
-    $_GET = ['test' => 3, 'email' => 'very_very_very_very_very_very_very_very_very_very_very_very_very_very_long_email@mail.ru'];
+    $_SERVER['REQUEST_URI'] = '/test?test=3&email=very_very_very_very_very_very_very_long_email@mail.ru';
+    $_GET = ['test' => 3, 'email' => 'very_very_very_very_very_very_very_long_email@mail.ru'];
     try {
       $result = $router->execURI();
       $this->assertEquals($result['test'], 3);
