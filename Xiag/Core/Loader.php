@@ -14,6 +14,10 @@ class Loader
   {
   }
 
+  private function __wakeup()
+  {
+  }
+
   private function __construct()
   {
     $this->reg();
