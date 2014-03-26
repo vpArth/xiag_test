@@ -4,8 +4,9 @@ namespace Xiag\DB;
 
 use Xiag\Core\DB;
 use Xiag\Core\Cache;
+use Xiag\ISaveable;
 
-abstract class Model implements \ArrayAccess
+abstract class Model implements \ArrayAccess, ISaveable
 {
   const CACHE_TIME = 60;
   const CACHE_PREFIX = 'cache_users_';
@@ -59,6 +60,11 @@ abstract class Model implements \ArrayAccess
     Cache::getInstance()->set($key, $this->data, static::CACHE_TIME);
 
     return $this->data['id'];
+  }
+
+  public function isSaved()
+  {
+    return isset($this['id']);
   }
 
   public static function getById($pkId)

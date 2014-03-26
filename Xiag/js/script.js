@@ -58,7 +58,7 @@ function request() {
   var longUrl = el.value;
   ajax.post('/', {url: el.value}, function(err, res){
     if(err) {
-      flash('<span style="color: red;">err.message</span>', 200);
+      flash('<span style="color: red;">'+err.message+'</span>', 200);
       return console.err(err);
     }
     var url = res;

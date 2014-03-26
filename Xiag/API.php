@@ -2,7 +2,7 @@
 
 namespace Xiag;
 
-use Xiag\Utils\UrlShotener;
+use Xiag\Utils\Hasher;
 use Xiag\DB\Urls;
 
 class API
@@ -32,15 +32,20 @@ class API
 
   private function shortAction($form)
   {
-    $svc = new UrlShotener($form['url']);
-    echo $svc->getUrl();
+    $url = new Urls(array('url'=>$form['url']));
+    $svc = new Hasher;
+    $hash = $svc->genHash($url);
+    echo "http://{$this->server['HTTP_HOST']}/{$hash}";
   }
 
   private function redirectAction($uri)
   {
     $url = explode('/', $uri);
     $hash = end($url);
-    $urlModel = Urls::getByHash($hash);
+    $svc = new Hasher;
+    $urlId = $svc->hash2num($hash);
+    if ($urlId)
+      $urlModel = Urls::getById($urlId);
     if($urlModel) {
       $url = $urlModel['url'];
       header('Location: ' . $url, true, 301);
