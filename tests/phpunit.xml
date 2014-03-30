@@ -3,5 +3,6 @@
         <file>./Core/Cache.php</file>
         <file>./Core/Config.php</file>
         <file>./Core/DB.php</file>
+        <file>./Utils/Hasher.php</file>
     </testsuite>
 </phpunit>
