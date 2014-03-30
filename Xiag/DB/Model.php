@@ -44,6 +44,11 @@ abstract class Model implements \ArrayAccess
       : (isset(static::$defaults[$offset]) ? static::$defaults[$offset] : null);
   }
 
+  public function __get($field) { return $this->offsetGet($field); }
+  public function __set($field, $value) { return $this->offsetSet($field); }
+  public function __isset($field) { return $this->offsetExists($field); }
+  public function __unset($field) { return $this->offsetUnset($field); }
+
   protected $database;
   protected $cache;
   public function __construct(DB $database, Cache $cache)
