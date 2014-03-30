@@ -3,7 +3,6 @@
   namespace Xiag;
 
   use Xiag\Core\Config;
-  use Xiag\Core\DB;
 
   require_once __DIR__ . '/../loader.php';
 
@@ -20,7 +19,5 @@
     else die("<h1>Internal Server Error</h1>");
   });
 
-  $database = new DB($config);
-
-  $api = new API($config, $database);
+  $api = new API($config);
   $api->action();

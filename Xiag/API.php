@@ -16,10 +16,10 @@ class API
   private $config;
   private $database;
 
-  public function __construct(Config $config, DB $database)
+  public function __construct(Config $config)
   {
     $this->config = $config;
-    $this->database = $database;
+    $this->database = new DB($config);;
     $this->server = $_SERVER;
     $this->request = $_REQUEST;
   }
