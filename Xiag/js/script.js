@@ -54,17 +54,24 @@ function result(msg) {
   el._html = el._t = null;
 }
 
+function urlValid(url) {
+  return url.match(/^https?:\/\//);
+}
+
 function request() {
   var el = document.querySelector('input[name=url]');
-  if (!el.validity.valid || !el.value) {
+  if (!urlValid(el.value)) {
     flash('<span style="color: red;">Wrong url format</span>', 2000);
     return;
   }
   var longUrl = el.value;
-  ajax.post('/', {url: el.value}, function(err, res){
+  ajax.post('/post', {url: el.value}, function(err, res){
     if(err) {
-      flash('<span style="color: red;">'+err.message+'</span>', 200);
-      return console.err(err);
+      flash('<span style="color: red;">'+err.message+'</span>', 2000);
+      return console.error(err);
+    } else if (!urlValid(res)) {
+      flash('<span style="color: red;">'+res+'</span>', 2000);
+      return;
     }
     var url = res;
     result('<a href="'+url+'">'+url+'</a>');

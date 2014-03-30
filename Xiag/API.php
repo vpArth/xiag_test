@@ -32,6 +32,10 @@ class API
 
   private function shortAction($form)
   {
+    if (!preg_match("#https?://#", $form['url'])) {
+      echo '<span style="color:red">Invalid URL</span>';
+      return;
+    }
     $url = new Urls(array('url'=>$form['url']));
     $svc = new Hasher;
     $hash = $svc->genHash($url);
