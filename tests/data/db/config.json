@@ -1,0 +1,8 @@
+{
+  "db": {
+    "dsn": "mysql:host=localhost;dbname=urls",
+    "username": "root",
+    "password": "root"
+  },
+  "table": "test"
+}

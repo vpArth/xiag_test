@@ -1,0 +1,7 @@
+<phpunit>
+    <testsuite name='Core'>
+        <file>./Core/Cache.php</file>
+        <file>./Core/Config.php</file>
+        <file>./Core/DB.php</file>
+    </testsuite>
+</phpunit>
