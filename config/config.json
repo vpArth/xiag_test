@@ -1,5 +1,6 @@
 {
   "name": "Xiag Test Task",
+  "debug": false,
   "db": {
     "dsn": "mysql:host=localhost;dbname=urls",
     "username": "root",

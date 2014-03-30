@@ -35,11 +35,7 @@ class DB
 
   private function connect()
   {
-    try {
-      $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
-    } catch (PDOException $e) {
-      throw new \Exception($e->getMessage());
-    }
+    $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
   }
 
   private static function getPDOType($var)
