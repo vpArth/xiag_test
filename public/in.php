@@ -9,11 +9,11 @@
 
   error_reporting(-1);
 
-  require_once __DIR__ . "/Core/Loader.php";
-  Loader::getInstance();
+  require_once __DIR__ . '/../loader.php';
+
   $config = Config::getInstance();
-  $config->load(__DIR__.'/config.local.json', Config::FORMAT_JSON);
-  $config->load(__DIR__.'/config.json', Config::FORMAT_JSON);
+  $config->load(__DIR__.'/../config/config.local.json', Config::FORMAT_JSON);
+  $config->load(__DIR__.'/../config/config.json', Config::FORMAT_JSON);
 
   $api = new API($_SERVER, $_REQUEST);
   $api->action();
