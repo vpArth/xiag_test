@@ -12,21 +12,28 @@ class DB
   private $affectedRows = 0;
   private $lastId = null;
 
+  private $config = array();
+
   public function __construct($config)
   {
-    $config = $config['db'];
+    $this->config = $config['db'];
+  }
 
-    $this->dsn      = isset($config['dsn'])      ? $config['dsn']      : 'mysql:host=localhost;dbname=messenger';
-    $this->username = isset($config['username']) ? $config['username'] : 'root';
-    $this->password = isset($config['password']) ? $config['password'] : '';
-    $this->options  = isset($config['options'])  ? $config['options']  : array(
-      PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8;"
-    );
+  public function setPDO(PDO $pdo)
+  {
+    $this->pdo = $pdo;
   }
 
   private function connect()
   {
-      $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
+    $dsn      = isset($this->config['dsn'])      ? $this->config['dsn']      : 'mysql:host=localhost;dbname=messenger';
+    $username = isset($this->config['username']) ? $this->config['username'] : 'root';
+    $password = isset($this->config['password']) ? $this->config['password'] : '';
+    $options  = isset($this->config['options'])  ? $this->config['options']  : array(
+      PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8;"
+    );
+
+    $this->pdo = new PDO($dsn, $username, $password, $options);
   }
 
   private static function getPDOType($var)

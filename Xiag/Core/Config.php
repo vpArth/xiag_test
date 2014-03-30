@@ -1,6 +1,8 @@
 <?php
 namespace Xiag\Core;
 
+class ConfigException extends \Exception {}
+
 class Config implements \ArrayAccess
 {
   const FORMAT_JSON = 'json';
@@ -28,7 +30,7 @@ class Config implements \ArrayAccess
     $json = file_get_contents($filename);
     $data = json_decode($json, true);
     if ($data === false || !is_array($data)) {
-      throw new \Exception("Wrong config json format");
+      throw new ConfigException("Wrong config json format");
     }
     $this->data += $data; // Don't overrides, need load configs from local to global
     return $this;
@@ -38,7 +40,7 @@ class Config implements \ArrayAccess
   {
     switch ($format) {
       case 'json': return $this->loadJSON($filename);
-      default: throw new \Exception('Unknown config format');
+      default: throw new ConfigException('Unknown config format');
     }
   }
 

@@ -6,6 +6,8 @@
 
   require_once __DIR__ . '/../loader.php';
 
+  //for php -S
+  if($_SERVER['REQUEST_URI'] === '/' || file_exists(__DIR__.$_SERVER['REQUEST_URI'])) return false;
 
   $config = new Config(__DIR__ . '/../config');
   $config->load('local');

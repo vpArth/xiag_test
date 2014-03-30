@@ -6,7 +6,7 @@ use Xiag\Core\DB;
 use Xiag\Core\Cache;
 use Xiag\ISaveable;
 
-abstract class Model implements \ArrayAccess, ISaveable
+abstract class Model implements \ArrayAccess
 {
   const CACHE_TIME = 60;
   const CACHE_PREFIX = 'cache_users_';

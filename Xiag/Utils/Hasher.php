@@ -9,19 +9,11 @@ class Hasher
 {
   private $abc = "0123456789_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
   //adding setter or config var for alphabet invalidate existing data... need solve this before allow different abcs
-  private function num2hash($num)
+  public function num2hash($num)
   {
     if ($num <= 0) return '';
     $base = strlen($this->abc);
     return $this->abc[$num % $base] . $this->num2hash(floor($num / $base));
-  }
-
-  public function genHash(ISaveable $model)
-  {
-    if (!$model->isSaved())
-      $model->save();
-    $num = $model['id'];
-    return $this->num2hash($num);
   }
 
   public function hash2num($hash)

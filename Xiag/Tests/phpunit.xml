@@ -1,5 +1,0 @@
-<phpunit>
-    <testsuite name='Core'>
-        <file>./Core/Loader.php</file>
-    </testsuite>
-</phpunit>

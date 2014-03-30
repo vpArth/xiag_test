@@ -46,8 +46,9 @@ class API
       return;
     }
     $url = new Urls(array('url'=>$form['url']), $this->database, new Cache($this->config));
+    $url->save();
     $svc = new Hasher;
-    $hash = $svc->genHash($url);
+    $hash = $svc->num2hash($url['id']);
     echo "http://{$this->server['HTTP_HOST']}/{$hash}";
   }
 

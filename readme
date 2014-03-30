@@ -1,9 +1,9 @@
 Installation:
   - Database:
     1. create database
-    2. import structure.sql
-    3. update config.json
-      - dsn, username, password
+    2. import install/structure.sql
+    3. add config/local.json (can copy from config/general.json)
+      - setup correct dsn, username, password
     4. also should be pdo extension installed
 
   - Cache:
@@ -14,6 +14,18 @@ Installation:
 
   - Run server:
     I use internal php server for development, each other server, like Apache or Nginx
-        should serve static files(index.html, css/*.css, js/*.js, ) in document root,
-        and if requested files don't exist rewrite queries to in.php script
-    for run internal server, simple execute run.sh script, or manually execute something like "php -S localhost:8000 ./in.php"
+        should serve static files(index.html, css/*.css, js/*.js, ) in `public` folder,
+        and if requested files don't exist rewrite queries to app.php script
+    Command for run internal server: "php -S localhost:8000 ./app.php"
+
+    My Apache VirtualHost:
+
+      <VirtualHost *:80>
+        ServerName xiag
+        DocumentRoot /home/arth/xiag/public
+        <Directory /home/arth/xiag/public>
+          AllowOverride None
+          Order allow,deny
+          allow from all
+        </Directory>
+      </VirtualHost>
