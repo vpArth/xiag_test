@@ -6,18 +6,9 @@ class Cache
 {
   private $memcache = null;
 
-  //Singleton
-  private static $instance = null;
-  private function __clone() {}
-  private function __wakeup() {}
-  public static function getInstance()
-  {
-    return self::$instance ? : (self::$instance = new self());
-  }
-  private function __construct()
+  public function __construct($config)
   {
     if (class_exists('\Memcache')) {
-      $config = Config::getInstance();
       $config = $config['cache'];
       $host = isset($config['host']) ? $config['host'] : 'localhost';
       $port = isset($config['port']) ? $config['port'] : 11211;

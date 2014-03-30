@@ -20,8 +20,12 @@ abstract class Model implements \ArrayAccess, ISaveable
   public function offsetUnset($offset) { unset($this->data[$offset]); }
   public function offsetGet($offset) { return isset($this->data[$offset]) ? $this->data[$offset] : null; }
 
-  public function __construct($data)
+  protected $db;
+  protected $cache;
+  public function __construct($data, DB $db, Cache $cache)
   {
+    $this->db = $db;
+    $this->cache = $cache;
     $this->setData($data);
   }
   public function setData($data)
@@ -52,12 +56,11 @@ abstract class Model implements \ArrayAccess, ISaveable
     $sql = isset($this->data['id'])
       ? "UPDATE `".static::$table."` SET $set WHERE `id` = :id"
       : "INSERT INTO `".static::$table."` ({$cols}) VALUES ({$vals})";
-    $dbh = DB::getInstance();
-    $dbh->exec($sql, $data);
-    if(!isset($this->data['id'])) $this->data['id'] = $dbh->getLastId();
+    $this->db->exec($sql, $data);
+    if(!isset($this->data['id'])) $this->data['id'] = $this->db->getLastId();
 
-    $key = static::CACHE_PREFIX.'_id_'.$this->data['id'];
-    Cache::getInstance()->set($key, $this->data, static::CACHE_TIME);
+    $key = self::CACHE_PREFIX.'_id_'.$this->data['id'];
+    $this->cache->set($key, $this->data, static::CACHE_TIME);
 
     return $this->data['id'];
   }
@@ -67,18 +70,18 @@ abstract class Model implements \ArrayAccess, ISaveable
     return isset($this['id']);
   }
 
-  public static function getById($pkId)
+  public function getById($pkId)
   {
     if (!$pkId) return false;
-    $key = static::CACHE_PREFIX.'_id_'.$pkId;
-    $data = Cache::getInstance()->get($key);
+    $key = self::CACHE_PREFIX.'_id_'.$pkId;
+    $data = $this->cache->get($key);
     if (!$data) {
       $sql = "SELECT * FROM `".static::$table."` WHERE `id` = :id";
-      $data = DB::getInstance()->row($sql, array(':id'=>$pkId));
+      $data = $this->db->row($sql, array(':id'=>$pkId));
       if (!$data) return false;
-      Cache::getInstance()->set($key, $data, self::CACHE_TIME); //store only fresh data
+      $this->cache->set($key, $data, self::CACHE_TIME); //store only fresh data
     }
-    return new static($data);
+    return $this->setData($data);
   }
 
 }

@@ -4,15 +4,12 @@ namespace Xiag\Core;
 class Config implements \ArrayAccess
 {
   const FORMAT_JSON = 'json';
-  //Singleton
-  private static $instance = null;
-  private function __clone() {}
-  private function __wakeup() {}
-  public static function getInstance()
+
+  protected $directory;
+  public function __construct($directory = 'config')
   {
-    return self::$instance ? : (self::$instance = new self());
+    $this->directory = $directory;
   }
-  private function __construct() {}
 
   //ArrayAccess
   private $data = array();
@@ -23,6 +20,7 @@ class Config implements \ArrayAccess
 
   public function loadJSON($filename)
   {
+    $filename = $this->directory . '/' . $filename . '.json';
     if (!file_exists($filename)) {
       // throw new \Exception("Config file $filename not found");
       return $this;

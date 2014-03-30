@@ -12,17 +12,8 @@ class DB
   private $affectedRows = 0;
   private $lastId = null;
 
-  //Singleton
-  private static $instance = null;
-  private function __clone() {}
-  private function __wakeup() {}
-  public static function getInstance()
+  public function __construct($config)
   {
-    return self::$instance ? : (self::$instance = new self());
-  }
-  private function __construct()
-  {
-    $config = Config::getInstance();
     $config = $config['db'];
 
     $this->dsn      = isset($config['dsn'])      ? $config['dsn']      : 'mysql:host=localhost;dbname=messenger';
@@ -35,7 +26,7 @@ class DB
 
   private function connect()
   {
-    $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
+      $this->pdo = new PDO($this->dsn, $this->username, $this->password, $this->options);
   }
 
   private static function getPDOType($var)

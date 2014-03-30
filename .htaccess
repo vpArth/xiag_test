@@ -3,4 +3,4 @@ Deny from all
 RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule .*  /in.php [L]
+RewriteRule .*  /app.php [L]
