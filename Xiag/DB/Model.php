@@ -6,36 +6,63 @@ use Xiag\Core\DB;
 use Xiag\Core\Cache;
 use Xiag\ISaveable;
 
+class ModelException extends \Exception {}
+
 abstract class Model implements \ArrayAccess
 {
   const CACHE_TIME = 60;
   const CACHE_PREFIX = 'cache_users_';
+  const PK = 'id';
   protected static $table = '';
 
   protected $data = array();
-  protected $fields = array();
 
-  public function offsetSet($offset, $value) { if (is_null($offset)) $this->data[] = $value; else $this->data[$offset] = $value; }
-  public function offsetExists($offset) { return isset($this->data[$offset]); }
-  public function offsetUnset($offset) { unset($this->data[$offset]); }
-  public function offsetGet($offset) { return isset($this->data[$offset]) ? $this->data[$offset] : null; }
+  protected static $fields = array('id');
+  protected static $defaults = array('id' => null);
 
-  protected $db;
-  protected $cache;
-  public function __construct($data, DB $db, Cache $cache)
+  public function offsetSet($offset, $value)
   {
-    $this->db = $db;
+    if (is_null($offset)) throw new ModelException('Unsupported operation');
+    if (!in_array($offset, static::$fields)) throw new ModelException("Unknown field $offset");
+    $this->data[$offset] = $value;
+    return $this;
+  }
+  public function offsetExists($offset)
+  {
+    return isset($this->data[$offset]) || isset(static::$defaults[$offset]);
+  }
+  public function offsetUnset($offset)
+  {
+    if (!in_array($offset, static::$fields)) return $this;//throw new ModelException("Unknown field $field"); unset should be silent
+    unset($this->data[$offset]);
+    return $this;
+  }
+  public function offsetGet($offset)
+  {
+    return isset($this->data[$offset])
+      ? $this->data[$offset]
+      : (isset(static::$defaults[$offset]) ? static::$defaults[$offset] : null);
+  }
+
+  protected $database;
+  protected $cache;
+  public function __construct(DB $database, Cache $cache)
+  {
+    $this->database = $database;
     $this->cache = $cache;
-    $this->setData($data);
   }
   public function setData($data)
   {
-    $this->data = $data;
+    foreach ($data as $field => $value) {
+      if (in_array($field, static::$fields)) {
+        $this[$field] = $value;
+      }
+    }
     return $this;
   }
   public function getData()
   {
-    return $this->data;
+    return $this->data + static::$defaults;
   }
   public function save()
   {
@@ -43,43 +70,43 @@ abstract class Model implements \ArrayAccess
     $cols = array();
     $vals = array();
     $data = array();
-    foreach ($this->fields as $field) {
+    foreach (static::$fields as $field) {
       $set[]  = "`{$field}`=:{$field}";
       $cols[] = "`{$field}`";
       $vals[] = ":{$field}";
-      $data[":{$field}"] = isset($this->data[$field]) ? $this->data[$field] : null;
+      $data[":{$field}"] = isset($this[$field]) ? $this[$field] : null;
     }
     $set = implode(',', $set);
     $cols = implode(',', $cols);
     $vals = implode(',', $vals);
 
-    $sql = isset($this->data['id'])
-      ? "UPDATE `".static::$table."` SET $set WHERE `id` = :id"
+    $sql = $this->isSaved()
+      ? "UPDATE `".static::$table."` SET $set WHERE `".static::PK."` = :id"
       : "INSERT INTO `".static::$table."` ({$cols}) VALUES ({$vals})";
-    $this->db->exec($sql, $data);
-    if(!isset($this->data['id'])) $this->data['id'] = $this->db->getLastId();
+    $this->database->exec($sql, $data);
+    $pkval = $this[static::PK] = $this->database->getLastId();
 
-    $key = self::CACHE_PREFIX.'_id_'.$this->data['id'];
+    $key = static::CACHE_PREFIX.'_id_'.$pkval;
     $this->cache->set($key, $this->data, static::CACHE_TIME);
 
-    return $this->data['id'];
+    return $pkval;
   }
 
   public function isSaved()
   {
-    return isset($this['id']);
+    return !is_null($this[static::PK]);
   }
 
   public function getById($pkId)
   {
     if (!$pkId) return false;
-    $key = self::CACHE_PREFIX.'_id_'.$pkId;
+    $key = static::CACHE_PREFIX.'_id_'.$pkId;
     $data = $this->cache->get($key);
     if (!$data) {
-      $sql = "SELECT * FROM `".static::$table."` WHERE `id` = :id";
-      $data = $this->db->row($sql, array(':id'=>$pkId));
+      $sql = "SELECT * FROM `".static::$table."` WHERE `".static::PK."` = :id";
+      $data = $this->database->row($sql, array(':id'=>$pkId));
       if (!$data) return false;
-      $this->cache->set($key, $data, self::CACHE_TIME); //store only fresh data
+      $this->cache->set($key, $data, static::CACHE_TIME); //store only fresh data
     }
     return $this->setData($data);
   }

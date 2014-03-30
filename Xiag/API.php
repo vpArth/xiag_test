@@ -45,10 +45,11 @@ class API
       echo '<span style="color:red">Invalid URL</span>';
       return;
     }
-    $url = new Urls(array('url'=>$form['url']), $this->database, new Cache($this->config));
+    $url = new Urls($this->database, new Cache($this->config));
+    $url['url'] = $form['url'];
     $url->save();
     $svc = new Hasher;
-    $hash = $svc->num2hash($url['id']);
+    $hash = $svc->num2hash($url[Urls::PK]);
     echo "http://{$this->server['HTTP_HOST']}/{$hash}";
   }
 
@@ -58,11 +59,10 @@ class API
     $hash = end($url);
     $svc = new Hasher;
     $urlId = $svc->hash2num($hash);
-    $url = new Urls(array(), $this->database, new Cache($this->config));
-    $urlModel = $urlId ? $url->getById($urlId) : null;
-    if($urlModel) {
-      $url = $urlModel['url'];
-      header('Location: ' . $url, true, 301);
+    $url = new Urls($this->database, new Cache($this->config));
+    $url = $urlId ? $url->getById($urlId) : null;
+    if($url) {
+      header('Location: ' . $url['url'], true, 301);
     } else {
       echo "Unknown URL";
     }
